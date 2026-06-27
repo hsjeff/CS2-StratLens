@@ -29,6 +29,17 @@ const utilities = [
   }
 ];
 
+const playerPath = [
+  { time: 0, x: 20, y: 70 },
+  { time: 1, x: 25, y: 65 },
+  { time: 2, x: 30, y: 60 },
+  { time: 3, x: 40, y: 55 },
+  { time: 4, x: 50, y: 50 }
+];
+const pathPoints = playerPath
+  .map((pos) => `${pos.x},${pos.y}`)
+  .join(" ");
+
 function App() {
   const [selectedUtility, setSelectedUtility] = useState(null);
 
@@ -38,6 +49,17 @@ function App() {
       <div className="layout">
         <div className="map-container">
           <img src={mirageMap} alt="Mirage map" className="map-image" />
+          <svg className="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <polyline className="path-line" points={pathPoints} />
+          </svg>
+          {playerPath.map((pos, index) => (
+            <div
+              key={index}
+              className="path-dot"
+              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+            />
+          ))}
+
           {utilities.map((utility) => (
             <div
               key={utility.id}
