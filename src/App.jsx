@@ -36,40 +36,66 @@ const playerPath = [
   { time: 3, x: 40, y: 55 },
   { time: 4, x: 50, y: 50 }
 ];
-const pathPoints = playerPath
-  .map((pos) => `${pos.x},${pos.y}`)
-  .join(" ");
 
 function App() {
   const [selectedUtility, setSelectedUtility] = useState(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const visiblePath = playerPath.filter((pos) => pos.time <= currentTime);
 
+  const pathPoints = visiblePath
+    .map((pos) => `${pos.x},${pos.y}`)
+    .join(" ");
+
+  const currentPlayerPosition = visiblePath[visiblePath.length - 1];
   return (
     <div>
       <h1>CS2 StratLens</h1>
       <div className="layout">
-        <div className="map-container">
-          <img src={mirageMap} alt="Mirage map" className="map-image" />
-          <svg className="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <polyline className="path-line" points={pathPoints} />
-          </svg>
-          {playerPath.map((pos, index) => (
-            <div
-              key={index}
-              className="path-dot"
-              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-            />
-          ))}
+        <div>
+          <div className="map-container">
+            <img src={mirageMap} alt="Mirage map" className="map-image" />
+            <svg className="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <polyline className="path-line" points={pathPoints} />
+            </svg>
+            {visiblePath.map((pos, index) => (
+              <div
+                key={index}
+                className="path-dot"
+                style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+              />
+            ))}
+            {currentPlayerPosition && (
+              <div
+                className="player-dot"
+                style={{
+                  left: `${currentPlayerPosition.x}%`,
+                  top: `${currentPlayerPosition.y}%`
+                }}
+              />
+            )}
 
-          {utilities.map((utility) => (
-            <div
-              key={utility.id}
-              className="marker"
-              style={{ left: `${utility.x}%`, top: `${utility.y}%` }}
-              onClick={() => setSelectedUtility(utility)}
-            >
-              {utility.type}
-            </div>
-          ))}
+            {utilities.map((utility) => (
+              <div
+                key={utility.id}
+                className="marker"
+                style={{ left: `${utility.x}%`, top: `${utility.y}%` }}
+                onClick={() => setSelectedUtility(utility)}
+              >
+                {utility.type}
+              </div>
+            ))}
+          </div>
+          <div className="timeline-control">
+            <label>Time: {currentTime}</label>
+
+            <input
+              type="range"
+              min="0"
+              max="4"
+              value={currentTime}
+              onChange={(event) => setCurrentTime(Number(event.target.value))}
+            />
+          </div>
         </div>
         <div className="info-panel">
           {selectedUtility ? (

@@ -57,3 +57,29 @@
   pointer-events: none;
   z-index: 2;
 }
+.player-dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: red;
+  border: 2px solid white;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.timeline-control {
+  margin-top: 16px;
+  width: 700px;
+}
+
+.timeline-control label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.timeline-control input {
+  width: 100%;
+}
