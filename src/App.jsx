@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import mirageMap from "./assets/Cs2_mirage.png";
 import "./App.css";
 
@@ -36,10 +36,12 @@ const playerPath = [
   { time: 3, x: 40, y: 55 },
   { time: 4, x: 50, y: 50 }
 ];
+const maxTime = playerPath[playerPath.length - 1].time;
 
 function App() {
   const [selectedUtility, setSelectedUtility] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const visiblePath = playerPath.filter((pos) => pos.time <= currentTime);
 
   const pathPoints = visiblePath
@@ -47,6 +49,24 @@ function App() {
     .join(" ");
 
   const currentPlayerPosition = visiblePath[visiblePath.length - 1];
+  useEffect(() => {
+    if (!isPlaying) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      setCurrentTime((prevTime) => {
+        if (prevTime >= maxTime) {
+          setIsPlaying(false);
+          return maxTime;
+        }
+
+        return prevTime + 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [isPlaying]);
   return (
     <div>
       <h1>CS2 StratLens</h1>
@@ -91,10 +111,24 @@ function App() {
             <input
               type="range"
               min="0"
-              max="4"
+              max={maxTime}
               value={currentTime}
               onChange={(event) => setCurrentTime(Number(event.target.value))}
             />
+            <div className="replay-buttons">
+              <button onClick={() => setIsPlaying(!isPlaying)}>
+                {isPlaying ? "Pause" : "Play"}
+              </button>
+
+              <button
+                onClick={() => {
+                  setCurrentTime(0);
+                  setIsPlaying(false);
+                }}
+              >
+                Reset
+              </button>
+            </div>
           </div>
         </div>
         <div className="info-panel">

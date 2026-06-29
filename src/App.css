@@ -83,3 +83,14 @@
 .timeline-control input {
   width: 100%;
 }
+
+.replay-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.replay-buttons button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
