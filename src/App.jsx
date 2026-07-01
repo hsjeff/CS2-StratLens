@@ -7,6 +7,7 @@ const utilities = [
     id: 1,
     name: "Window Smoke",
     type: "Smoke",
+    playerId: "T1",
     x: 52,
     y: 38,
     description: "Blocks Window for mid control."
@@ -15,6 +16,7 @@ const utilities = [
     id: 2,
     name: "A Ramp Flash",
     type: "Flash",
+    playerId: "T1",
     x: 40,
     y: 62,
     description: "Helps teammates enter A site."
@@ -23,9 +25,19 @@ const utilities = [
     id: 3,
     name: "Default Molotov",
     type: "Molotov",
+    playerId: "CT1",
     x: 58,
     y: 58,
     description: "Clears default plant position."
+  },
+  {
+    id: 4,
+    name: "Connector Smoke",
+    type: "Smoke",
+    playerId: "CT1",
+    x: 60,
+    y: 45,
+    description: "Blocks connector vision."
   }
 ];
 
@@ -61,8 +73,22 @@ function App() {
   const [selectedUtility, setSelectedUtility] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [selectedPlayerId, setSelectedPlayerId] = useState("ALL");
+  const [selectedUtilityType, setSelectedUtilityType] = useState("ALL");
 
-  const visiblePlayers = players.map((player) => {
+  const filteredPlayers = players.filter((player) => {
+    return selectedPlayerId === "ALL" || player.id === selectedPlayerId;
+  });
+  const filteredUtilities = utilities.filter((utility) => {
+    const matchesPlayer =
+      selectedPlayerId === "ALL" || utility.playerId === selectedPlayerId;
+
+    const matchesType =
+      selectedUtilityType === "ALL" || utility.type === selectedUtilityType;
+
+    return matchesPlayer && matchesType;
+  });
+  const visiblePlayers = filteredPlayers.map((player) => {
     const visiblePath = player.path.filter((pos) => pos.time <= currentTime);
 
     const pathPoints = visiblePath
@@ -100,6 +126,53 @@ function App() {
       <h1>CS2 StratLens</h1>
       <div className="layout">
         <div>
+          <div className="filter-panel">
+            <div className="filter-group">
+              <label>Player</label>
+              <select
+                value={selectedPlayerId}
+                onChange={(event) => {
+                  setSelectedPlayerId(event.target.value);
+                  setSelectedUtility(null);
+                }}
+              >
+                <option value="ALL">All players</option>
+                {players.map((player) => (
+                  <option key={player.id} value={player.id}>
+                    {player.id} - {player.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Utility</label>
+              <select
+                value={selectedUtilityType}
+                onChange={(event) => {
+                  setSelectedUtilityType(event.target.value);
+                  setSelectedUtility(null);
+                }}
+              >
+                <option value="ALL">All utilities</option>
+                <option value="Smoke">Smoke</option>
+                <option value="Flash">Flash</option>
+                <option value="Molotov">Molotov</option>
+                <option value="Grenade">Grenade</option>
+                <option value="Decoy">Decoy</option>
+              </select>
+            </div>
+
+            <button
+              onClick={() => {
+                setSelectedPlayerId("ALL");
+                setSelectedUtilityType("ALL");
+                setSelectedUtility(null);
+              }}
+            >
+              Reset Filters
+            </button>
+          </div>
           <div className="map-container">
             <img src={mirageMap} alt="Mirage map" className="map-image" />
             <svg className="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -133,7 +206,7 @@ function App() {
               ) : null
             )}
 
-            {utilities.map((utility) => (
+            {filteredUtilities.map((utility) => (
               <div
                 key={utility.id}
                 className="marker"
