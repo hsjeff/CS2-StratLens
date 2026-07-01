@@ -155,3 +155,124 @@
   padding: 6px 12px;
   cursor: pointer;
 }
+
+.utility-projectile {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: orange;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  cursor: pointer;
+}
+
+.utility-effect {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.utility-label {
+  font-weight: bold;
+  color: #222;
+  font-size: 14px;
+}
+
+.utility-effect.smoke {
+  background: rgba(180, 180, 180, 0.48);
+  border: 2px solid rgba(245, 245, 245, 0.9);
+  box-shadow: 0 0 24px rgba(180, 180, 180, 0.8);
+  animation: smokePulse 1.6s ease-in-out infinite;
+}
+
+.utility-effect.flash {
+  background: rgba(255, 245, 80, 0.5);
+  border: 2px solid rgba(255, 255, 180, 1);
+  box-shadow: 0 0 35px rgba(255, 245, 80, 0.95);
+  animation: flashPop 0.35s ease-out infinite alternate;
+}
+
+.utility-effect.molotov {
+  background: rgba(255, 90, 0, 0.42);
+  border: 2px solid rgba(255, 160, 40, 0.95);
+  box-shadow: 0 0 28px rgba(255, 90, 0, 0.9);
+  animation: fireFlicker 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes smokePulse {
+  from {
+    opacity: 0.42;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  to {
+    opacity: 0.62;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes flashPop {
+  from {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  to {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@keyframes fireFlicker {
+  from {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+  to {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+.utility-throw-line {
+  fill: none;
+  stroke-width: 0.8;
+  stroke-dasharray: 2 2;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+.smoke-throw-line {
+  stroke: white;
+}
+
+.flash-throw-line {
+  stroke: yellow;
+}
+
+.molotov-throw-line {
+  stroke: orange;
+}
+
+.smoke-projectile {
+  background: #aaa;
+}
+
+.flash-projectile {
+  background: #f5d400;
+  color: black;
+}
+
+.molotov-projectile {
+  background: #ff6a00;
+}
