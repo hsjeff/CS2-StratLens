@@ -29,26 +29,54 @@ const utilities = [
   }
 ];
 
-const playerPath = [
-  { time: 0, x: 20, y: 70 },
-  { time: 1, x: 25, y: 65 },
-  { time: 2, x: 30, y: 60 },
-  { time: 3, x: 40, y: 55 },
-  { time: 4, x: 50, y: 50 }
+const players = [
+  {
+    id: "T1",
+    name: "T Player 1",
+    team: "T",
+    path: [
+      { time: 0, x: 20, y: 70 },
+      { time: 1, x: 25, y: 65 },
+      { time: 2, x: 30, y: 60 },
+      { time: 3, x: 40, y: 55 },
+      { time: 4, x: 50, y: 50 }
+    ]
+  },
+  {
+    id: "CT1",
+    name: "CT Player 1",
+    team: "CT",
+    path: [
+      { time: 0, x: 75, y: 30 },
+      { time: 1, x: 70, y: 35 },
+      { time: 2, x: 65, y: 40 },
+      { time: 3, x: 60, y: 45 },
+      { time: 4, x: 55, y: 50 }
+    ]
+  }
 ];
-const maxTime = playerPath[playerPath.length - 1].time;
+const maxTime = Math.max(...players.flatMap((player) => player.path.map((pos) => pos.time)));
 
 function App() {
   const [selectedUtility, setSelectedUtility] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const visiblePath = playerPath.filter((pos) => pos.time <= currentTime);
 
-  const pathPoints = visiblePath
-    .map((pos) => `${pos.x},${pos.y}`)
-    .join(" ");
+  const visiblePlayers = players.map((player) => {
+    const visiblePath = player.path.filter((pos) => pos.time <= currentTime);
 
-  const currentPlayerPosition = visiblePath[visiblePath.length - 1];
+    const pathPoints = visiblePath
+      .map((pos) => `${pos.x},${pos.y}`)
+      .join(" ");
+
+    const currentPosition = visiblePath[visiblePath.length - 1];
+    return {
+      ...player,
+      visiblePath,
+      pathPoints,
+      currentPosition
+    };
+  });
   useEffect(() => {
     if (!isPlaying) {
       return;
@@ -66,7 +94,7 @@ function App() {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [isPlaying]);
+  }, [isPlaying, maxTime]);
   return (
     <div>
       <h1>CS2 StratLens</h1>
@@ -75,23 +103,34 @@ function App() {
           <div className="map-container">
             <img src={mirageMap} alt="Mirage map" className="map-image" />
             <svg className="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <polyline className="path-line" points={pathPoints} />
+              {visiblePlayers.map((player) => (
+                <polyline
+                  key={player.id}
+                  className={`path-line ${player.team === "T" ? "t-path" : "ct-path"}`}
+                  points={player.pathPoints} />
+              ))}
             </svg>
-            {visiblePath.map((pos, index) => (
-              <div
-                key={index}
-                className="path-dot"
-                style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-              />
-            ))}
-            {currentPlayerPosition && (
-              <div
-                className="player-dot"
-                style={{
-                  left: `${currentPlayerPosition.x}%`,
-                  top: `${currentPlayerPosition.y}%`
-                }}
-              />
+            {visiblePlayers.map((player) =>
+              player.visiblePath.map((pos, index) => (
+                <div
+                  key={`${player.id}-${index}`}
+                  className={`path-dot ${player.team === "T" ? "t-dot" : "ct-dot"}`}
+                  style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                />
+              )))}
+            {visiblePlayers.map((player) =>
+              player.currentPosition ? (
+                <div
+                  key={player.id}
+                  className={`player-dot ${player.team === "T" ? "t-player" : "ct-player"}`}
+                  style={{
+                    left: `${player.currentPosition.x}%`,
+                    top: `${player.currentPosition.y}%`
+                  }}
+                >
+                  {player.id}
+                </div>
+              ) : null
             )}
 
             {utilities.map((utility) => (

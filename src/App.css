@@ -41,7 +41,6 @@
 
 .path-line {
   fill: none;
-  stroke: red;
   stroke-width: 0.8;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -59,14 +58,21 @@
 }
 .player-dot {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: red;
   border: 2px solid white;
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 4;
+
+  color: white;
+  font-size:10px;
+  font-weight: bold;
+
+  display:flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .timeline-control {
@@ -93,4 +99,28 @@
 .replay-buttons button {
   padding: 6px 12px;
   cursor: pointer;
+}
+
+.t-path {
+  stroke: red;
+}
+
+.ct-path {
+  stroke: blue;
+}
+
+.t-dot {
+  background: red;
+}
+
+.ct-dot {
+  background: blue;
+}
+
+.t-player {
+  background: red;
+}
+
+.ct-player {
+  background: blue;
 }
