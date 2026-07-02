@@ -165,6 +165,9 @@ function App() {
   });
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const searchTerms = normalizedSearchQuery
+    .split(/\s+/)
+    .filter((term) => term !== "");
 
   const filteredUtilities = utilities.filter((utility) => {
     const matchesPlayer =
@@ -181,9 +184,7 @@ function App() {
     ]
       .join(" ")
       .toLowerCase();
-    const searchTerms = normalizedSearchQuery
-    .split(/\s+/)
-    .filter((term) => term !== "");
+    
     const matchesSearch =
       normalizedSearchQuery.length === 0 ||
       searchTerms.every((term) => searchableText.includes(term));
