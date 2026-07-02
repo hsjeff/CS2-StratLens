@@ -13,8 +13,8 @@ const utilities = [
     landTime: 2.0,
     expireTime: 8.0,
 
-    startX: 32,
-    startY: 60,
+    startX: 25,
+    startY: 65,
 
     landX: 45,
     landY: 52,
@@ -30,10 +30,10 @@ const utilities = [
 
     throwTime: 1.5,
     landTime: 2.2,
-    expireTime: 4.0,
+    expireTime: 3.0,
 
-    startX: 28,
-    startY: 66,
+    startX: 25.5,
+    startY: 69,
 
     landX: 42,
     landY: 51,
@@ -51,8 +51,8 @@ const utilities = [
     landTime: 2.8,
     expireTime: 9.0,
 
-    startX: 72,
-    startY: 36,
+    startX: 65,
+    startY: 40,
 
     landX: 55,
     landY: 48,
@@ -158,10 +158,14 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState("ALL");
   const [selectedUtilityType, setSelectedUtilityType] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredPlayers = players.filter((player) => {
     return selectedPlayerId === "ALL" || player.id === selectedPlayerId;
   });
+
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+
   const filteredUtilities = utilities.filter((utility) => {
     const matchesPlayer =
       selectedPlayerId === "ALL" || utility.throwerId === selectedPlayerId;
@@ -169,7 +173,22 @@ function App() {
     const matchesType =
       selectedUtilityType === "ALL" || utility.type === selectedUtilityType;
 
-    return matchesPlayer && matchesType;
+    const searchableText = [
+      utility.name,
+      utility.type,
+      utility.throwerId,
+      utility.description
+    ]
+      .join(" ")
+      .toLowerCase();
+    const searchTerms = normalizedSearchQuery
+    .split(/\s+/)
+    .filter((term) => term !== "");
+    const matchesSearch =
+      normalizedSearchQuery.length === 0 ||
+      searchTerms.every((term) => searchableText.includes(term));
+
+    return matchesPlayer && matchesType && matchesSearch;
   });
 
   const utilityStates = filteredUtilities.map((utility) => {
@@ -275,17 +294,57 @@ function App() {
                 <option value="Decoy">Decoy</option>
               </select>
             </div>
-
+            <div className="filter-group search-group">
+              <label>Search</label>
+              <input
+                type="text"
+                value={searchQuery}
+                placeholder="Type here..."
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
+                  setSelectedUtility(null);
+                }}
+              />
+            </div>
             <button
               onClick={() => {
                 setSelectedPlayerId("ALL");
                 setSelectedUtilityType("ALL");
                 setSelectedUtility(null);
+                setSearchQuery("");
               }}
             >
               Reset Filters
             </button>
           </div>
+          {normalizedSearchQuery !== "" && (
+            <div className="search-results">
+              <p>
+                Search results: {filteredUtilities.length}
+              </p>
+
+              {filteredUtilities.length === 0 ? (
+                <p>No utilities found.</p>
+              ) : (
+                filteredUtilities.map((utility) => (
+                  <button
+                    key={utility.id}
+                    className="search-result-item"
+                    onClick={() => {
+                      setSelectedUtility(utility);
+                      setCurrentTime(utility.landTime);
+                      setIsPlaying(false);
+                    }}
+                  >
+                    <strong>{utility.name}</strong>
+                    <span>
+                      {utility.type} · {utility.throwerId} · lands at {utility.landTime}s
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          )}
           <div className="map-container">
             <img src={mirageMap} alt="Mirage map" className="map-image" />
             <svg className="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -443,7 +502,7 @@ function App() {
               </button>
             </>
           ) : (
-            <p>Click a utility or player marker.</p>
+            <><h2>Utility Event Details</h2><p>Click an active utility on the map.</p></>
           )}
         </div>
       </div>

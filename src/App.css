@@ -276,3 +276,41 @@
 .molotov-projectile {
   background: #ff6a00;
 }
+
+.search-group input {
+  padding: 6px;
+  min-width: 180px;
+}
+
+.search-results {
+  width: 700px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+}
+
+.search-results p {
+  margin: 0 0 8px 0;
+}
+
+.search-result-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px;
+  margin-bottom: 6px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.search-result-item:hover {
+  background: #eeeeee;
+}
+
+.search-result-item span {
+  color: #666;
+}
