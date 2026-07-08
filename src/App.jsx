@@ -100,7 +100,6 @@ const players = [
     ]
   }
 ];
-const maxTime = Math.max(...players.flatMap((player) => player.path.map((pos) => pos.time)), ...utilities.map((utility) => utility.expireTime));
 
 function getInterpolatedPath(path, currentTime) {
   if (currentTime <= path[0].time) {
@@ -160,7 +159,45 @@ function App() {
   const [selectedUtilityType, setSelectedUtilityType] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredPlayers = players.filter((player) => {
+  const [roundPlayers, setRoundPlayers] = useState(players);
+  const [roundUtilities, setRoundUtilities] = useState(utilities);
+  const [isLoadingRound, setIsLoadingRound] = useState(false);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    async function loadRoundData() {
+      try {
+        setIsLoadingRound(true);
+        setLoadError("");
+
+        const response = await fetch("http://127.0.0.1:8000/api/round");
+
+        if (!response.ok) {
+          throw new Error(`Backend returned ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        setRoundPlayers(data.players);
+        setRoundUtilities(data.utilities);
+      } catch (error) {
+        console.error(error);
+        setLoadError("Could not load backend data. Using local mock data.");
+      } finally {
+        setIsLoadingRound(false);
+      }
+    }
+
+    loadRoundData();
+  }, []);
+
+  const maxTime = Math.max(
+    0,
+    ...roundPlayers.flatMap((player) => player.path.map((pos) => pos.time)),
+    ...roundUtilities.map((utility) => utility.expireTime)
+  );
+
+  const filteredPlayers = roundPlayers.filter((player) => {
     return selectedPlayerId === "ALL" || player.id === selectedPlayerId;
   });
 
@@ -169,7 +206,7 @@ function App() {
     .split(/\s+/)
     .filter((term) => term !== "");
 
-  const filteredUtilities = utilities.filter((utility) => {
+  const filteredUtilities = roundUtilities.filter((utility) => {
     const matchesPlayer =
       selectedPlayerId === "ALL" || utility.throwerId === selectedPlayerId;
 
@@ -184,7 +221,7 @@ function App() {
     ]
       .join(" ")
       .toLowerCase();
-    
+
     const matchesSearch =
       normalizedSearchQuery.length === 0 ||
       searchTerms.every((term) => searchableText.includes(term));
@@ -257,6 +294,8 @@ function App() {
   return (
     <div>
       <h1>CS2 StratLens</h1>
+      {isLoadingRound && <p>Loading backend round data...</p>}
+      {loadError !== "" && <p>{loadError}</p>}
       <div className="layout">
         <div>
           <div className="filter-panel">
@@ -270,7 +309,7 @@ function App() {
                 }}
               >
                 <option value="ALL">All players</option>
-                {players.map((player) => (
+                {roundPlayers.map((player) => (
                   <option key={player.id} value={player.id}>
                     {player.id} - {player.name}
                   </option>
