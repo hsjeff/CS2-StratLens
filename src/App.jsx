@@ -164,6 +164,10 @@ function App() {
   const [isLoadingRound, setIsLoadingRound] = useState(false);
   const [loadError, setLoadError] = useState("");
 
+  const [selectedDemoFile, setSelectedDemoFile] = useState(null);
+  const [isUploadingDemo, setIsUploadingDemo] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+
   useEffect(() => {
     async function loadRoundData() {
       try {
@@ -190,6 +194,41 @@ function App() {
 
     loadRoundData();
   }, []);
+
+  async function handleDemoUpload() {
+    if (!selectedDemoFile) {
+      setUploadMessage("Please choose a .dem file first.");
+      return;
+    }
+
+    try {
+      setIsUploadingDemo(true);
+      setUploadMessage("");
+
+      const formData = new FormData();
+      formData.append("file", selectedDemoFile);
+
+      const response = await fetch("http://127.0.0.1:8000/upload-demo", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Demo upload failed.");
+      }
+
+      setUploadMessage(
+        `${data.filename} uploaded successfully. Saved to ${data.savedTo}.`
+      );
+    } catch (error) {
+      console.error(error);
+      setUploadMessage(error.message);
+    } finally {
+      setIsUploadingDemo(false);
+    }
+  }
 
   const maxTime = Math.max(
     0,
@@ -298,6 +337,41 @@ function App() {
       {loadError !== "" && <p>{loadError}</p>}
       <div className="layout">
         <div>
+          <div className="upload-panel">
+            <h2>Upload CS2 Demo</h2>
+
+            <div className="upload-controls">
+              <input
+                type="file"
+                accept=".dem"
+                onChange={(event) => {
+                  const file = event.target.files[0];
+
+                  if (file) {
+                    setSelectedDemoFile(file);
+                    setUploadMessage("");
+                  }
+                }}
+              />
+
+              <button
+                onClick={handleDemoUpload}
+                disabled={!selectedDemoFile || isUploadingDemo}
+              >
+                {isUploadingDemo ? "Uploading..." : "Upload Demo"}
+              </button>
+            </div>
+
+            {selectedDemoFile && (
+              <p className="selected-file">
+                Selected file: {selectedDemoFile.name}
+              </p>
+            )}
+
+            {uploadMessage !== "" && (
+              <p className="upload-message">{uploadMessage}</p>
+            )}
+          </div>
           <div className="filter-panel">
             <div className="filter-group">
               <label>Player</label>

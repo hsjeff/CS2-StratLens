@@ -314,3 +314,47 @@
 .search-result-item span {
   color: #666;
 }
+
+.upload-panel {
+  width: 700px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+}
+
+.upload-panel h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.upload-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.upload-controls input {
+  flex: 1;
+}
+
+.upload-controls button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.upload-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.selected-file {
+  margin: 10px 0 0 0;
+  font-size: 14px;
+}
+
+.upload-message {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  font-weight: bold;
+}
