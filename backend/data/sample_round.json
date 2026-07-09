@@ -1,0 +1,88 @@
+{
+  "map": "mirage",
+  "players": [
+    {
+      "id": "T1",
+      "name": "T Player 1",
+      "team": "T",
+      "path": [
+        { "time": 0, "x": 20, "y": 70 },
+        { "time": 1, "x": 25, "y": 65 },
+        { "time": 2, "x": 30, "y": 60 },
+        { "time": 3, "x": 40, "y": 55 },
+        { "time": 4, "x": 50, "y": 50 }
+      ]
+    },
+    {
+      "id": "T2",
+      "name": "T Player 2",
+      "team": "T",
+      "path": [
+        { "time": 0, "x": 18, "y": 78 },
+        { "time": 1, "x": 23, "y": 72 },
+        { "time": 2, "x": 28, "y": 66 },
+        { "time": 3, "x": 35, "y": 60 },
+        { "time": 4, "x": 42, "y": 55 }
+      ]
+    },
+    {
+      "id": "CT1",
+      "name": "CT Player 1",
+      "team": "CT",
+      "path": [
+        { "time": 0, "x": 75, "y": 30 },
+        { "time": 1, "x": 70, "y": 35 },
+        { "time": 2, "x": 65, "y": 40 },
+        { "time": 3, "x": 60, "y": 45 },
+        { "time": 4, "x": 55, "y": 50 }
+      ]
+    }
+  ],
+  "utilities": [
+    {
+      "id": 1,
+      "name": "Window Smoke",
+      "type": "Smoke",
+      "throwerId": "T1",
+      "throwTime": 1.0,
+      "landTime": 2.0,
+      "expireTime": 8.0,
+      "startX": 25,
+      "startY": 65,
+      "landX": 45,
+      "landY": 52,
+      "radius": 8,
+      "description": "Blocks connector vision for mid control."
+    },
+    {
+      "id": 2,
+      "name": "Top Mid Flash",
+      "type": "Flash",
+      "throwerId": "T2",
+      "throwTime": 1.5,
+      "landTime": 2.2,
+      "expireTime": 3.0,
+      "startX": 25.5,
+      "startY": 69,
+      "landX": 42,
+      "landY": 51,
+      "radius": 10,
+      "description": "Pop flash for top mid."
+    },
+    {
+      "id": 3,
+      "name": "Short Molotov",
+      "type": "Molotov",
+      "throwerId": "CT1",
+      "throwTime": 2.0,
+      "landTime": 2.8,
+      "expireTime": 9.0,
+      "startX": 65,
+      "startY": 40,
+      "landX": 55,
+      "landY": 48,
+      "radius": 7,
+      "description": "Denies short push."
+    }
+  ]
+}

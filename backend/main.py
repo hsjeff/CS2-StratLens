@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import json
+from pathlib import Path
+import shutil
 
 app = FastAPI()
 app.add_middleware(
@@ -10,44 +13,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-players = [
-    {
-        "id": "T1",
-        "name": "T Player 1",
-        "team": "T",
-        "path": [
-            {"time": 0, "x": 20, "y": 70},
-            {"time": 1, "x": 25, "y": 65},
-            {"time": 2, "x": 30, "y": 60},
-        ],
-    }
-]
-
-utilities = [
-    {
-        "id": 1,
-        "name": "Window Smoke",
-        "type": "Smoke",
-        "throwerId": "T1",
-        "throwTime": 1.0,
-        "landTime": 2.0,
-        "expireTime": 8.0,
-        "startX": 25,
-        "startY": 65,
-        "landX": 45,
-        "landY": 52,
-        "radius": 8,
-        "description": "Blocks connector vision for mid control.",
-    }
-]
-
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 @app.get("/")
 def read_root():
     return {"message": "CS2 StratLens backend is running"}
 
 
-@app.get("/api/health")
+@app.get("/health")
 def health_check():
     return {
         "status": "ok",
@@ -55,10 +29,31 @@ def health_check():
     }
 
 
-@app.get("/api/round")
+@app.get("/round")
 def get_round_data():
+    file_path = Path("data/sample_round.json")
+
+    with file_path.open("r") as file:
+        round_data = json.load(file)
+
+    return round_data   
+
+@app.post("/upload-demo")
+async def upload_demo(file: UploadFile = File(...)):
+    if file.filename is None or not file.filename.lower().endswith(".dem"):
+        raise HTTPException(
+            status_code=400,
+            detail="Only .dem files are supported for now."
+        )
+
+    file_path = UPLOAD_DIR / file.filename
+
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
     return {
-        "map": "mirage",
-        "players": players,
-        "utilities": utilities,
+        "message": "Demo uploaded successfully.",
+        "filename": file.filename,
+        "savedTo": str(file_path),
+        "nextStep": "Parsing will be added later."
     }

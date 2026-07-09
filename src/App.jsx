@@ -170,7 +170,7 @@ function App() {
         setIsLoadingRound(true);
         setLoadError("");
 
-        const response = await fetch("http://127.0.0.1:8000/api/round");
+        const response = await fetch("http://127.0.0.1:8000/round");
 
         if (!response.ok) {
           throw new Error(`Backend returned ${response.status}`);
