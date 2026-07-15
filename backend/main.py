@@ -3,8 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 import json
 from pathlib import Path
 import shutil
+from database import initialize_database
 
 app = FastAPI()
+
+initialize_database()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -36,6 +40,13 @@ def health_check():
         "service": "cs2-stratlens-backend"
     }
 
+@app.get("/database-status")
+def database_status():
+    return {
+        "database": "connected",
+        "file": "stratlens.db",
+        "tables": ["utilities"]
+    }
 
 @app.get("/round")
 def get_round_data():
