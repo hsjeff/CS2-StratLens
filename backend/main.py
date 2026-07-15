@@ -16,6 +16,14 @@ app.add_middleware(
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
+def load_round_data():
+    file_path = Path("data/sample_round.json")
+
+    with file_path.open("r") as file:
+        round_data = json.load(file)
+
+    return round_data
+
 @app.get("/")
 def read_root():
     return {"message": "CS2 StratLens backend is running"}
@@ -31,12 +39,17 @@ def health_check():
 
 @app.get("/round")
 def get_round_data():
-    file_path = Path("data/sample_round.json")
+    return load_round_data()
 
-    with file_path.open("r") as file:
-        round_data = json.load(file)
+@app.get("/players")
+def get_players():
+    round_data = load_round_data()
+    return round_data["players"]
 
-    return round_data   
+@app.get("/utilities")
+def get_utilities():
+    round_data = load_round_data()
+    return round_data["utilities"]
 
 @app.post("/upload-demo")
 async def upload_demo(file: UploadFile = File(...)):
