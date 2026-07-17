@@ -1,9 +1,12 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import json
 from pathlib import Path
 import shutil
-from database import initialize_database
+from database import (initialize_database, get_all_utilities,
+    get_utility_by_id,
+    insert_utility)
 
 app = FastAPI()
 
@@ -19,6 +22,20 @@ app.add_middleware(
 
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
+
+class UtilityCreate(BaseModel):
+    name: str
+    type: str
+    throwerId: str
+    throwTime: float
+    landTime: float
+    expireTime: float
+    startX: float
+    startY: float
+    landX: float
+    landY: float
+    radius: float
+    description: str
 
 def load_round_data():
     file_path = Path("data/sample_round.json")
@@ -59,8 +76,17 @@ def get_players():
 
 @app.get("/utilities")
 def get_utilities():
-    round_data = load_round_data()
-    return round_data["utilities"]
+     return get_all_utilities()
+
+@app.post("/utilities")
+def create_utility(utility: UtilityCreate):
+    utility_data = utility.model_dump()
+
+    new_id = insert_utility(utility_data)
+
+    created_utility = get_utility_by_id(new_id)
+
+    return created_utility
 
 @app.post("/upload-demo")
 async def upload_demo(file: UploadFile = File(...)):
