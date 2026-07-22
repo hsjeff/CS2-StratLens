@@ -168,6 +168,9 @@ function App() {
   const [isUploadingDemo, setIsUploadingDemo] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
 
+  const [currentPage, setCurrentPage] = useState("home");
+  const [activeReplayName, setActiveReplayName] = useState("Sample Mirage Replay");
+
   useEffect(() => {
     async function loadRoundData() {
       try {
@@ -194,6 +197,23 @@ function App() {
 
     loadRoundData();
   }, []);
+
+  function openSampleReplay() {
+    setActiveReplayName("Sample Mirage Replay");
+    setCurrentTime(0);
+    setIsPlaying(false);
+    setSelectedUtility(null);
+    setSelectedPlayerId("ALL");
+    setSelectedUtilityType("ALL");
+    setSearchQuery("");
+    setCurrentPage("replay");
+  }
+
+  function goBackHome() {
+    setIsPlaying(false);
+    setSelectedUtility(null);
+    setCurrentPage("home");
+  }
 
   async function handleDemoUpload() {
     if (!selectedDemoFile) {
@@ -330,11 +350,163 @@ function App() {
 
     return () => clearInterval(intervalId);
   }, [isPlaying, maxTime]);
+
+  if (currentPage === "home") {
+    return (
+      <div>
+        <div className="home-page">
+          <section className="hero-section">
+            <div>
+              <p className="eyebrow">CS2 Replay Analysis Prototype</p>
+              <h1>CS2 StratLens</h1>
+              <p className="hero-description">
+                Upload, inspect, and visualize Counter-Strike 2 replay data with
+                player movement, utility timelines, search, and filters.
+              </p>
+
+              <div className="hero-actions">
+                <button onClick={openSampleReplay}>
+                  View Sample Replay
+                </button>
+
+                <button
+                  className="secondary-button"
+                  onClick={() => {
+                    setUploadMessage("Demo upload is available below. Parsing will be connected next.");
+                  }}
+                >
+                  Upload Demo
+                </button>
+              </div>
+            </div>
+
+            <div className="hero-card">
+              <h2>Current MVP</h2>
+              <ul>
+                <li>React replay viewer</li>
+                <li>FastAPI backend</li>
+                <li>SQLite utility prototype</li>
+                <li>Demo upload endpoint</li>
+              </ul>
+            </div>
+          </section>
+
+          <section className="home-grid">
+            <div className="home-panel">
+              <h2>Upload CS2 Demo</h2>
+              <p>
+                Upload a .dem file to start the analysis pipeline. The backend can
+                save demo files now; parsing will be connected next.
+              </p>
+
+              <div className="upload-controls">
+                <input
+                  type="file"
+                  accept=".dem"
+                  onChange={(event) => {
+                    const file = event.target.files[0];
+
+                    if (file) {
+                      setSelectedDemoFile(file);
+                      setUploadMessage("");
+                    }
+                  }}
+                />
+
+                <button
+                  onClick={handleDemoUpload}
+                  disabled={!selectedDemoFile || isUploadingDemo}
+                >
+                  {isUploadingDemo ? "Uploading..." : "Upload Demo"}
+                </button>
+              </div>
+
+              {selectedDemoFile && (
+                <p className="selected-file">
+                  Selected file: {selectedDemoFile.name}
+                </p>
+              )}
+
+              {uploadMessage !== "" && (
+                <p className="upload-message">{uploadMessage}</p>
+              )}
+            </div>
+
+            <div className="home-panel">
+              <h2>Supported Maps</h2>
+              <div className="map-card-list">
+                <div className="map-card active-map-card">
+                  <strong>Mirage</strong>
+                  <span>Available now</span>
+                </div>
+
+                <div className="map-card">
+                  <strong>Inferno</strong>
+                  <span>Coming next</span>
+                </div>
+
+                <div className="map-card">
+                  <strong>Dust II</strong>
+                  <span>Coming next</span>
+                </div>
+
+                <div className="map-card">
+                  <strong>Nuke</strong>
+                  <span>Coming next</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="home-panel">
+              <h2>Analysis Features</h2>
+              <ul>
+                <li>Timeline replay</li>
+                <li>Player path visualization</li>
+                <li>Smoke, flash, and molotov lifecycle states</li>
+                <li>Search by name, type, thrower, or description</li>
+                <li>Filter by player and utility type</li>
+              </ul>
+            </div>
+
+            <div className="home-panel">
+              <h2>Next Engineering Step</h2>
+              <p>
+                The next goal is to parse uploaded CS2 demo files and convert
+                parser output into the same round data schema used by the replay
+                viewer.
+              </p>
+
+              <button onClick={openSampleReplay}>
+                Open Replay Viewer
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <h1>CS2 StratLens</h1>
+      <div className="replay-header">
+        <div>
+          <button className="back-button" onClick={goBackHome}>
+            ← Back to Home
+          </button>
+          <h1>CS2 StratLens</h1>
+          <p>{activeReplayName}</p>
+        </div>
+
+        <div className="replay-status">
+          <span>Map: Mirage</span>
+          <span>Players: {roundPlayers.length}</span>
+          <span>Utilities: {roundUtilities.length}</span>
+        </div>
+      </div>
+
       {isLoadingRound && <p>Loading backend round data...</p>}
       {loadError !== "" && <p>{loadError}</p>}
+
       <div className="layout">
         <div>
           <div className="upload-panel">

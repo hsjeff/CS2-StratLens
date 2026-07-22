@@ -358,3 +358,133 @@
   font-size: 14px;
   font-weight: bold;
 }
+
+.home-page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.hero-section {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 24px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+}
+
+.eyebrow {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #666;
+}
+
+.hero-section h1 {
+  margin: 0;
+  font-size: 40px;
+}
+
+.hero-description {
+  max-width: 620px;
+  line-height: 1.5;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.hero-actions button,
+.home-panel button {
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.secondary-button {
+  background: white;
+  border: 1px solid #999;
+}
+
+.hero-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  background: white;
+}
+
+.hero-card h2 {
+  margin-top: 0;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.home-panel {
+  border: 1px solid #ccc;
+  padding: 16px;
+  background: white;
+}
+
+.home-panel h2 {
+  margin-top: 0;
+}
+
+.map-card-list {
+  display: grid;
+  gap: 8px;
+}
+
+.map-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+}
+
+.active-map-card {
+  border-color: #333;
+  background: #eeeeee;
+}
+
+.replay-header {
+  width: 1030px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.replay-header h1 {
+  margin: 8px 0 4px 0;
+}
+
+.replay-header p {
+  margin: 0;
+  color: #666;
+}
+
+.back-button {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.replay-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.replay-status span {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  background: #fafafa;
+  font-size: 14px;
+}
