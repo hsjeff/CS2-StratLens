@@ -109,3 +109,34 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.map-card {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+  cursor: pointer;
+  text-align: left;
+}
+
+.map-card:hover {
+  background: #eeeeee;
+}
+
+.map-card span {
+  color: #666;
+  font-size: 14px;
+}
+
+.active-map-card {
+  border-color: #333;
+  background: #eeeeee;
+}
+
+.selected-map-note {
+  margin: 12px 0 0 0;
+  font-size: 14px;
+}

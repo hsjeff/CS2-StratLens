@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import mirageMap from "./assets/Cs2_mirage.png";
+import { maps, getMapById } from "./mapConfig";
 import "./App.css";
 
 const utilities = [
@@ -170,6 +170,9 @@ function App() {
 
   const [currentPage, setCurrentPage] = useState("home");
   const [activeReplayName, setActiveReplayName] = useState("Sample Mirage Replay");
+  const [selectedMapId, setSelectedMapId] = useState("mirage");
+
+  const selectedMap = getMapById(selectedMapId);
 
   useEffect(() => {
     async function loadRoundData() {
@@ -199,7 +202,12 @@ function App() {
   }, []);
 
   function openSampleReplay() {
-    setActiveReplayName("Sample Mirage Replay");
+    if (selectedMap.status !== "available") {
+      setUploadMessage(`${selectedMap.name} support is coming next. Mirage is available now.`);
+      return;
+    }
+
+    setActiveReplayName(`Sample ${selectedMap.name} Replay`);
     setCurrentTime(0);
     setIsPlaying(false);
     setSelectedUtility(null);
@@ -366,7 +374,7 @@ function App() {
 
               <div className="hero-actions">
                 <button onClick={openSampleReplay}>
-                  View Sample Replay
+                  View {selectedMap.name} Sample Replay
                 </button>
 
                 <button
@@ -434,27 +442,34 @@ function App() {
 
             <div className="home-panel">
               <h2>Supported Maps</h2>
+              <p>
+                Choose the map you want to analyze. Mirage is available now; other maps
+                are ready in the map system and will be connected with images and
+                calibration next.
+              </p>
+
               <div className="map-card-list">
-                <div className="map-card active-map-card">
-                  <strong>Mirage</strong>
-                  <span>Available now</span>
-                </div>
-
-                <div className="map-card">
-                  <strong>Inferno</strong>
-                  <span>Coming next</span>
-                </div>
-
-                <div className="map-card">
-                  <strong>Dust II</strong>
-                  <span>Coming next</span>
-                </div>
-
-                <div className="map-card">
-                  <strong>Nuke</strong>
-                  <span>Coming next</span>
-                </div>
+                {maps.map((map) => (
+                  <button
+                    key={map.id}
+                    type="button"
+                    className={`map-card ${selectedMapId === map.id ? "active-map-card" : ""}`}
+                    onClick={() => {
+                      setSelectedMapId(map.id);
+                      setUploadMessage("");
+                    }}
+                  >
+                    <strong>{map.name}</strong>
+                    <span>
+                      {map.status === "available" ? "Available now" : "Coming next"}
+                    </span>
+                  </button>
+                ))}
               </div>
+
+              <p className="selected-map-note">
+                Selected map: <strong>{selectedMap.name}</strong>
+              </p>
             </div>
 
             <div className="home-panel">
@@ -498,7 +513,7 @@ function App() {
         </div>
 
         <div className="replay-status">
-          <span>Map: Mirage</span>
+          <span>Map: {selectedMap.name}</span>
           <span>Players: {roundPlayers.length}</span>
           <span>Utilities: {roundUtilities.length}</span>
         </div>
@@ -632,7 +647,11 @@ function App() {
             </div>
           )}
           <div className="map-container">
-            <img src={mirageMap} alt="Mirage map" className="map-image" />
+            <img
+              src={selectedMap.image}
+              alt={`${selectedMap.name} map`}
+              className="map-image"
+            />
             <svg className="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
               {visiblePlayers.map((player) => (
                 <polyline
